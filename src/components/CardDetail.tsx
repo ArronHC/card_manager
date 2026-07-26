@@ -27,7 +27,8 @@ export function CardDetail({
   const [revealed, setRevealed] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const clearTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const copiedNumber = useRef<string | null>(null)
+  /** 本应用最后一次写进剪贴板的内容（卡号/CVV/持卡人等），用于到期比对清空 */
+  const copiedValue = useRef<string | null>(null)
 
   // 换卡或关闭时一律回到遮码状态，不让上一张的明文残留
   useEffect(() => {
@@ -44,9 +45,9 @@ export function CardDetail({
   }, [card, onClose])
 
   const clearOwnedClipboard = async () => {
-    const owned = copiedNumber.current
+    const owned = copiedValue.current
     if (!owned) return
-    copiedNumber.current = null
+    copiedValue.current = null
     if (clearTimer.current) {
       clearTimeout(clearTimer.current)
       clearTimer.current = null
@@ -75,22 +76,25 @@ export function CardDetail({
     }
   }, [])
 
-  const copyNumber = async () => {
-    if (!card) return
-    const digits = normalizeDigits(card.secret.fullNumber)
+  /** 复制任意敏感字段，统一走 30 秒后自动清空的通道。 */
+  const copyField = async (label: string, value: string) => {
+    if (!value) return
     try {
-      await navigator.clipboard.writeText(digits)
-      copiedNumber.current = digits
+      await navigator.clipboard.writeText(value)
+      copiedValue.current = value
       notifySuccess()
-      toast(`已复制卡号，${CLIPBOARD_CLEAR_MS / 1000} 秒后自动清空`)
+      toast(`已复制${label}，${CLIPBOARD_CLEAR_MS / 1000} 秒后自动清空`)
       if (clearTimer.current) clearTimeout(clearTimer.current)
       clearTimer.current = setTimeout(() => {
         void clearOwnedClipboard()
       }, CLIPBOARD_CLEAR_MS)
     } catch {
-      toast('复制失败，请手动选择卡号')
+      toast(`复制失败，请手动选择${label}`)
     }
   }
+
+  const copyNumber = () =>
+    card ? copyField('卡号', normalizeDigits(card.secret.fullNumber)) : Promise.resolve()
 
   return (
     <AnimatePresence>
@@ -150,7 +154,7 @@ export function CardDetail({
                       colorOverride={card.colorOverride}
                     />
                   </div>
-                  {/* 背面：只有翻过来时才渲染完整卡号 */}
+                  {/* 背面：只有翻过来时才渲染完整卡号，点卡上信息即复制 */}
                   <div
                     style={{
                       position: 'absolute',
@@ -170,8 +174,10 @@ export function CardDetail({
                       last4={card.last4}
                       holder={card.secret.holder}
                       expiry={card.secret.expiry}
+                      cvv={card.secret.cvv}
                       revealed
                       colorOverride={card.colorOverride}
+                      onCopyField={(label, value) => void copyField(label, value)}
                     />
                   </div>
                 </motion.div>
@@ -237,6 +243,13 @@ export function CardDetail({
                 <Row label="有效期">
                   <span className="detail__row-value detail__row-value--mono">
                     {card.secret.expiry}
+                  </span>
+                </Row>
+              )}
+              {card.secret.cvv && (
+                <Row label="安全码">
+                  <span className="detail__row-value detail__row-value--mono">
+                    {revealed ? card.secret.cvv : '•••'}
                   </span>
                 </Row>
               )}

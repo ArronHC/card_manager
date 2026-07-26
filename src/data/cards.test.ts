@@ -86,6 +86,46 @@ describe('卡片 CRUD', () => {
     expect(card.network).toBe('unionpay')
   })
 
+  it('CVV 加密保存并可读回，遗留数据补空串', SLOW, async () => {
+    await createCard(
+      dek,
+      draft({ secret: { ...EMPTY_SECRET, fullNumber: '6225 8801 2345 6783', cvv: '123' } }),
+    )
+    const [card] = await loadCards(dek)
+    expect(card.secret.cvv).toBe('123')
+    // 密文是 base64，短数字可能随机出现；用字段名验证载荷没有以明文落库
+    expect(JSON.stringify(await db.cards.toArray())).not.toContain('cvv')
+
+    // 老数据没有 cvv 字段，解密后应补成空串而不是 undefined
+    await db.cards.clear()
+    const id = crypto.randomUUID()
+    const legacy = {
+      payloadVersion: 3,
+      nickname: '旧卡',
+      bankKey: 'cmb',
+      bankName: '招商银行',
+      network: 'unionpay' as const,
+      cardType: 'debit' as const,
+      last4: '6789',
+      bin: '622588',
+      tags: [],
+      fullNumber: '6225 8801 2345 6789',
+      holder: '',
+      expiry: '',
+      phone: '',
+      note: '',
+    }
+    await db.cards.add({
+      id,
+      sortIndex: 0,
+      createdAt: 1,
+      updatedAt: 1,
+      secret: await seal(dek, legacy, id),
+    })
+    const [migrated] = await loadCards(dek)
+    expect(migrated.secret.cvv).toBe('')
+  })
+
   it('落库的行不含任何用户可见明文', SLOW, async () => {
     await createCard(dek, draft())
     const raw = await db.cards.toArray()

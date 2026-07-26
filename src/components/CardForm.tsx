@@ -241,6 +241,7 @@ export function CardForm({
           last4={detection.last4}
           holder={draft.secret.holder}
           expiry={draft.secret.expiry}
+          cvv={draft.secret.cvv}
           revealed
           colorOverride={draft.colorOverride}
         />
@@ -382,6 +383,24 @@ export function CardForm({
         </label>
       </div>
 
+      <div className="field__row">
+        <label className="field">
+          <span className="field__label">安全码 CVV</span>
+          <input
+            className="field__control field__control--mono"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={4}
+            placeholder="选填"
+            value={draft.secret.cvv}
+            onChange={(e) => setSecret('cvv', e.target.value.replace(/\D/g, ''))}
+          />
+          <span className="field__hint">
+            与卡号一起存在同一台设备里，请自行权衡风险
+          </span>
+        </label>
+      </div>
+
       <label className="field">
         <span className="field__label">预留手机号</span>
         <input
@@ -474,8 +493,8 @@ export function CardForm({
       </label>
 
       <p className="form__note">
-        卡号、持卡人、手机号与备注都会用你的 PIN 加密后存在本机，不上传任何服务器。
-        本应用有意不提供 CVV / 密码字段 —— 卡号与 CVV 一旦同时留存，等于凑齐了可直接盗刷的组合。
+        卡号、持卡人、安全码、手机号与备注都会用你的 PIN 加密后存在本机，不上传任何服务器。
+        注意：卡号与安全码集中存在同一设备有被一锅端的风险，安全码建议只在确有需要时填写。
       </p>
     </Sheet>
   )

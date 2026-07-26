@@ -175,11 +175,52 @@
   text-overflow: ellipsis;
 }
 
+.card-face__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+
 .card-face__expiry {
   font-family: var(--font-mono);
   font-size: clamp(10px, 3.2vw, 12px);
   opacity: 0.82;
   flex: none;
+}
+
+.card-face__cvv {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 3.2vw, 12px);
+  opacity: 0.82;
+  flex: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.card-face__meta-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+/* 可点击复制的卡面信息：不破坏排版，按压时轻微下陷提示可交互 */
+.card-face__copyable {
+  color: inherit;
+  text-align: inherit;
+  letter-spacing: inherit;
+  border-radius: 6px;
+  margin: -2px -6px;
+  padding: 2px 6px;
+  transition: background 120ms ease, transform 120ms ease;
+  cursor: pointer;
+}
+
+.card-face__copyable:active {
+  background: rgba(255, 255, 255, 0.14);
+  transform: scale(0.97);
 }
 
 /* ── 翻面容器 ───────────────────────────────────── */

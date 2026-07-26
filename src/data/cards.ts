@@ -31,7 +31,10 @@ function isStoredSecret(value: CardSecret | StoredSecret): value is StoredSecret
   return 'nickname' in value && 'bankKey' in value && 'tags' in value
 }
 
-/** 旧版本载荷可能带有 iin8 / artwork 等已废弃字段，读出时统一剥掉。 */
+/**
+ * 旧版本载荷可能带有 iin8 / artwork 等已废弃字段，读出时统一剥掉；
+ * 同时用 EMPTY_SECRET 补齐后加的敏感字段（如 cvv），保证解密结果 shape 完整。
+ */
 function normalizeStoredSecret(payload: StoredSecret): StoredSecret {
   const {
     iin8: _iin8,
@@ -39,6 +42,7 @@ function normalizeStoredSecret(payload: StoredSecret): StoredSecret {
     ...rest
   } = payload as StoredSecret & { iin8?: unknown; artwork?: unknown }
   return {
+    ...EMPTY_SECRET,
     ...rest,
     payloadVersion: CURRENT_CARD_PAYLOAD_VERSION,
   }
@@ -70,6 +74,7 @@ function toCard(row: StoredCard, payload: StoredSecret): Card {
     fullNumber,
     holder,
     expiry,
+    cvv,
     phone,
     note,
     ...metadata
@@ -80,7 +85,7 @@ function toCard(row: StoredCard, payload: StoredSecret): Card {
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
     ...metadata,
-    secret: { fullNumber, holder, expiry, phone, note },
+    secret: { fullNumber, holder, expiry, cvv, phone, note },
   }
 }
 

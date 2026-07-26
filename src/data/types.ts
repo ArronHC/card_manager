@@ -41,6 +41,8 @@ export interface CardSecret {
   fullNumber: string
   holder: string
   expiry: string
+  /** CVV/CVN2，选填。与卡号同库同密，用户须自行权衡集中存储的风险。 */
+  cvv: string
   phone: string
   note: string
 }
@@ -49,6 +51,7 @@ export const EMPTY_SECRET: CardSecret = {
   fullNumber: '',
   holder: '',
   expiry: '',
+  cvv: '',
   phone: '',
   note: '',
 }

@@ -11,6 +11,9 @@ import { BankGlyph } from './BankGlyph'
 import { NetworkMark } from './NetworkMark'
 import './CardFace.css'
 
+/** 点击卡面信息复制时的回调；label 用于 toast 文案。 */
+export type CopyFieldHandler = (label: string, value: string) => void
+
 export interface CardFaceProps {
   bankKey: string
   bankName: string
@@ -22,9 +25,12 @@ export interface CardFaceProps {
   last4: string
   holder?: string
   expiry?: string
+  cvv?: string
   /** true 时显示完整卡号，否则遮码 */
   revealed?: boolean
   colorOverride?: string
+  /** 提供后，revealed 状态下卡面信息可点击复制 */
+  onCopyField?: CopyFieldHandler
 }
 
 /** 把 override 的单色扩成一组有层次的渐变，避免纯色卡面显得扁平。 */
@@ -52,6 +58,48 @@ function shade(hex: string, amount: number): string {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+/**
+ * 可复制字段：revealed 且传入 onCopy 时渲染成按钮（点击即复制），
+ * 否则是普通展示。className 由调用方传，按钮不改变原有排版。
+ */
+function CopyableText({
+  className,
+  label,
+  value,
+  display,
+  onCopy,
+  ariaLabel,
+}: {
+  className: string
+  label: string
+  value: string
+  display: React.ReactNode
+  onCopy?: CopyFieldHandler
+  ariaLabel?: string
+}) {
+  if (!onCopy || !value) {
+    return (
+      <div className={className} aria-label={ariaLabel}>
+        {display}
+      </div>
+    )
+  }
+  return (
+    <button
+      type="button"
+      className={`${className} card-face__copyable`}
+      aria-label={`复制${label}`}
+      onClick={(e) => {
+        // 卡面在列表里可能被套在可点击容器中，复制不应触发外层跳转
+        e.stopPropagation()
+        onCopy(label, value)
+      }}
+    >
+      {display}
+    </button>
+  )
+}
+
 export function CardFace({
   bankKey,
   bankName,
@@ -62,8 +110,10 @@ export function CardFace({
   last4,
   holder,
   expiry,
+  cvv,
   revealed = false,
   colorOverride,
+  onCopyField,
 }: CardFaceProps) {
   const theme = bankTheme(bankKey)
   const fg = colorOverride ? '#ffffff' : theme.foreground
@@ -77,6 +127,8 @@ export function CardFace({
     : maskCardNumber('•'.repeat(12) + (last4 || '••••'), network)
 
   const networkLabel = NETWORK_LABEL[network]
+  // 只有明文可见时才允许点击复制
+  const copy = revealed ? onCopyField : undefined
 
   return (
     <div
@@ -101,20 +153,47 @@ export function CardFace({
 
         <div className="card-face__chip" aria-hidden="true" />
 
-        <div
+        <CopyableText
           className={`card-face__number${revealed ? ' selectable' : ''}`}
-          aria-label={revealed ? '完整卡号' : '卡号已遮码'}
-        >
-          {numberText}
-        </div>
+          label="卡号"
+          value={digits}
+          display={numberText}
+          onCopy={copy}
+          ariaLabel={revealed ? '完整卡号' : '卡号已遮码'}
+        />
 
         <div className="card-face__bottom">
-          <div className="card-face__holder">
-            {holder || ' '}
-            {expiry ? '' : ''}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            {expiry && <span className="card-face__expiry">{expiry}</span>}
+          <CopyableText
+            className="card-face__holder"
+            label="持卡人"
+            value={holder ?? ''}
+            display={holder || ' '}
+            onCopy={copy}
+          />
+          <div className="card-face__meta">
+            {revealed && cvv && (
+              <CopyableText
+                className="card-face__cvv"
+                label="安全码"
+                value={cvv}
+                display={
+                  <>
+                    <span className="card-face__meta-label">CVV</span>
+                    {cvv}
+                  </>
+                }
+                onCopy={copy}
+              />
+            )}
+            {expiry && (
+              <CopyableText
+                className="card-face__expiry"
+                label="有效期"
+                value={expiry}
+                display={expiry}
+                onCopy={copy}
+              />
+            )}
             <NetworkMark network={network} color={fg} />
           </div>
         </div>
