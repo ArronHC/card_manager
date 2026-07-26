@@ -1,0 +1,93 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 背景：App 同款深空黑，带一点蓝紫氛围光 -->
+    <radialGradient id="bg-glow" cx="50%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#1b2030"/>
+      <stop offset="55%" stop-color="#101018"/>
+      <stop offset="100%" stop-color="#0b0b0f"/>
+    </radialGradient>
+    <!-- 钱包主体：蓝色渐变（呼应 accent #0a84ff） -->
+    <linearGradient id="wallet-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3d8bff"/>
+      <stop offset="55%" stop-color="#1668e3"/>
+      <stop offset="100%" stop-color="#0a4fb4"/>
+    </linearGradient>
+    <!-- 钱包内衬阴影 -->
+    <linearGradient id="wallet-inner" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#062a63"/>
+      <stop offset="100%" stop-color="#0a3d8f"/>
+    </linearGradient>
+    <!-- 探出的卡片：红色渐变（招行红，主界面第一张卡） -->
+    <linearGradient id="card-red" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e04358"/>
+      <stop offset="60%" stop-color="#c22032"/>
+      <stop offset="100%" stop-color="#8e1220"/>
+    </linearGradient>
+    <!-- 第二张卡：金色 -->
+    <linearGradient id="card-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d693"/>
+      <stop offset="100%" stop-color="#c9a24e"/>
+    </linearGradient>
+    <!-- 钱包盖顶部高光 -->
+    <linearGradient id="flap-sheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <!-- 卡片高光 -->
+    <linearGradient id="card-sheen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.30"/>
+      <stop offset="45%" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+    <filter id="card-shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.42"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1024" height="1024" fill="url(#bg-glow)"/>
+
+  <!-- 钱包后袋（内衬），形成开口 -->
+  <g filter="url(#soft-shadow)">
+    <rect x="192" y="330" width="640" height="430" rx="76" fill="url(#wallet-inner)"/>
+  </g>
+
+  <!-- 金卡：从左侧探出一角，和红卡形成扇形层次 -->
+  <g filter="url(#card-shadow)">
+    <rect x="228" y="236" width="520" height="330" rx="40" fill="url(#card-gold)" transform="rotate(-7 488 401)"/>
+  </g>
+
+  <!-- 红卡：探出更多，是视觉主角 -->
+  <g filter="url(#card-shadow)" transform="rotate(2.4 512 400)">
+    <rect x="248" y="196" width="528" height="352" rx="42" fill="url(#card-red)"/>
+    <rect x="248" y="196" width="528" height="352" rx="42" fill="url(#card-sheen)"/>
+    <!-- 芯片 -->
+    <rect x="306" y="258" width="86" height="64" rx="12" fill="#e8d9a8"/>
+    <rect x="306" y="278" width="86" height="3.5" fill="#00000038"/>
+    <rect x="306" y="298" width="86" height="3.5" fill="#00000038"/>
+    <rect x="333" y="258" width="3.5" height="64" fill="#00000038"/>
+    <rect x="361" y="258" width="3.5" height="64" fill="#00000038"/>
+  </g>
+
+  <!-- 钱包前盖 -->
+  <g filter="url(#soft-shadow)">
+    <path d="M192 470
+             q0 -34 34 -34 h572
+             q34 0 34 34 v218
+             q0 76 -76 76 h-488
+             q-76 0 -76 -76 z"
+          fill="url(#wallet-body)"/>
+    <!-- 顶部高光沿 -->
+    <path d="M192 470 q0 -34 34 -34 h572 q34 0 34 34 v40 h-640 z"
+          fill="url(#flap-sheen)"/>
+  </g>
+
+  <!-- 按扣 -->
+  <circle cx="716" cy="620" r="46" fill="#0a3d8f"/>
+  <circle cx="716" cy="620" r="46" fill="url(#card-sheen)"/>
+  <circle cx="716" cy="620" r="22" fill="#062a63"/>
+  <circle cx="710" cy="613" r="9" fill="#5ea4ff" opacity="0.85"/>
+</svg>
