@@ -35,4 +35,5 @@ android/app/release/
 *.aab
 *.keystore
 !android/app/debug.keystore
+android/keystore.properties
 .gradle/
