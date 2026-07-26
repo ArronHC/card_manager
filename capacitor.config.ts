@@ -15,7 +15,9 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: 'LIGHT',
       backgroundColor: '#0b0b0f',
-      overlaysWebView: true,
+      // Android WebView 的 env(safe-area-inset-top) 恒为 0：
+      // 若让内容垫到状态栏下面，顶部按钮会落进状态栏的触摸区域而点不到。
+      overlaysWebView: false,
     },
   },
 }

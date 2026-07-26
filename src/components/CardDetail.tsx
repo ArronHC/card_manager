@@ -2,6 +2,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { formatCardNumber, NETWORK_LABEL, normalizeDigits } from '../bin/detect'
 import { CARD_TYPE_LABEL, type Card } from '../data/types'
+import { readClipboard, writeClipboard } from '../ui/clipboard'
 import { notifySuccess, tapLight, tapMedium } from '../ui/haptics'
 import { REDUCED, SPRING, SPRING_FLIP } from '../ui/motion'
 import { CardFace } from './CardFace'
@@ -52,12 +53,9 @@ export function CardDetail({
       clearTimeout(clearTimer.current)
       clearTimer.current = null
     }
-    try {
-      const cur = await navigator.clipboard.readText()
-      if (cur === owned) await navigator.clipboard.writeText('')
-    } catch {
-      // 无法读取时不盲目清空，避免擦掉用户之后复制的其他内容。
-    }
+    // 无法读取时不盲目清空，避免擦掉用户之后复制的其他内容。
+    const cur = await readClipboard()
+    if (cur === owned) await writeClipboard('').catch(() => undefined)
   }
 
   // 关闭详情、上锁（组件卸载）或进入后台时，立即清理本应用拥有的卡号。
@@ -80,7 +78,7 @@ export function CardDetail({
   const copyField = async (label: string, value: string) => {
     if (!value) return
     try {
-      await navigator.clipboard.writeText(value)
+      await writeClipboard(value)
       copiedValue.current = value
       notifySuccess()
       toast(`已复制${label}，${CLIPBOARD_CLEAR_MS / 1000} 秒后自动清空`)
@@ -127,8 +125,23 @@ export function CardDetail({
               </button>
             </div>
 
-            {/* layoutId 与 WalletStack 中的卡片一致，形成连续形变而非淡入 */}
-            <motion.div className="detail__card" layoutId={`card-${card.id}`}>
+            {/* layoutId 与 WalletStack 中的卡片一致，形成连续形变而非淡入。
+                下拉卡片超过阈值（或甩出速度）即视为"放回卡槽"关闭详情；
+                松手回位由 dragSnapToOrigin 的弹簧接管。 */}
+            <motion.div
+              className="detail__card"
+              layoutId={`card-${card.id}`}
+              drag={reduced ? false : 'y'}
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0.08, bottom: 0.6 }}
+              dragSnapToOrigin
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 130 || info.velocity.y > 900) {
+                  tapLight()
+                  onClose()
+                }
+              }}
+            >
               <div
                 style={{
                   perspective: 1400,

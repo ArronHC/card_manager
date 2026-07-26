@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { App as CapApp } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
+import { useEffect, useState } from 'react'
 import { CardDetail } from './components/CardDetail'
 import { CardForm } from './components/CardForm'
 import { LockScreen } from './components/LockScreen'
@@ -28,6 +30,24 @@ function UnlockedVault({
   // 只保存 ID，不复制持卡人、完整卡号等明文对象到额外的 React state。
   const detail = cards.cards.find((card) => card.id === detailId) ?? null
   const editing = cards.cards.find((card) => card.id === editingId) ?? null
+
+  // Android 系统返回（侧滑/返回键）：逐层关闭弹层，到主列表再交还系统（退到后台）。
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    const sub = CapApp.addListener('backButton', () => {
+      if (formOpen) {
+        setFormOpen(false)
+        setEditingId(null)
+      } else if (detailId) {
+        setDetailId(null)
+      } else {
+        void CapApp.minimizeApp()
+      }
+    })
+    return () => {
+      void sub.then((s) => s.remove())
+    }
+  }, [formOpen, detailId])
 
   const submitCard = async (draft: CardDraft) => {
     if (editingId) {
