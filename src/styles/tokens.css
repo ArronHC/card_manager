@@ -1,0 +1,64 @@
+/*
+ * 设计 token —— 全部走 CSS 变量，组件里不写死数值。
+ * 配色以深色为主（钱包类应用在深色下卡面渐变更有质感）。
+ */
+:root {
+  /* 字体：优先系统字体，Android 上落到 Roboto / 思源 */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI',
+    Roboto, 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  /* 卡号用等宽，分组后不会因数字宽度不同而抖动 */
+  --font-mono: 'SF Mono', 'Roboto Mono', ui-monospace, 'Cascadia Mono',
+    Menlo, monospace;
+
+  /* 表面层级 */
+  --bg: #0b0b0f;
+  --bg-elevated: #16161d;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --hairline: rgba(255, 255, 255, 0.1);
+  --hairline-strong: rgba(255, 255, 255, 0.18);
+
+  /* 前景 */
+  --text: #f5f5f7;
+  --text-secondary: rgba(245, 245, 247, 0.62);
+  --text-tertiary: rgba(245, 245, 247, 0.38);
+
+  /* 强调色 */
+  --accent: #0a84ff;
+  --accent-pressed: #0060d0;
+  --danger: #ff453a;
+  --success: #30d158;
+  --warning: #ff9f0a;
+
+  /* 间距刻度（4 的倍数） */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+  --sp-10: 40px;
+  --sp-12: 48px;
+
+  /* 圆角 —— 卡面用大圆角贴近实体卡 */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-card: 22px;
+  --r-sheet: 28px;
+  --r-full: 999px;
+
+  /* 阴影 */
+  --shadow-card: 0 18px 40px -12px rgba(0, 0, 0, 0.75);
+  --shadow-float: 0 24px 60px -16px rgba(0, 0, 0, 0.85);
+
+  /* 卡片几何：标准银行卡 85.6 × 53.98mm ≈ 1.586 */
+  --card-aspect: 1.586;
+  /* Wallet 堆叠时每张卡露出的高度 */
+  --stack-peek: 62px;
+
+  /* 安全区（Capacitor 全屏时状态栏/手势条） */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}

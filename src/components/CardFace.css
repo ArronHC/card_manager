@@ -1,0 +1,192 @@
+.card-face {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--card-aspect);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  /* 卡面本身作为 3D 场景的子元素，翻面靠父层 preserve-3d */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  isolation: isolate;
+}
+
+/* 顶部高光：模拟塑料卡在环境光下的反射 */
+.card-face::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      120% 80% at 12% -10%,
+      rgba(255, 255, 255, 0.28),
+      transparent 55%
+    ),
+    linear-gradient(200deg, rgba(255, 255, 255, 0.1), transparent 42%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 底部压暗，让卡片有厚度感 */
+.card-face::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 55%,
+    rgba(0, 0, 0, 0.22)
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.card-face__body {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: clamp(14px, 5.2%, 22px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-face__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.card-face__bank {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  min-width: 0;
+}
+
+.card-face__bank-text {
+  min-width: 0;
+}
+
+.card-face__bank-name {
+  font-size: clamp(13px, 4.2vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-face__nickname {
+  font-size: clamp(10px, 3.2vw, 12px);
+  opacity: 0.72;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-face__badge {
+  flex: none;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--r-full);
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  white-space: nowrap;
+}
+
+/* 芯片：金属渐变 + 触点纹路 */
+.card-face__chip {
+  width: clamp(30px, 10%, 40px);
+  aspect-ratio: 4 / 3;
+  border-radius: 5px;
+  background: linear-gradient(135deg, #e8d9a8, #b99a4e 45%, #f0e6c4 70%, #a8873c);
+  position: relative;
+  overflow: hidden;
+  flex: none;
+}
+
+.card-face__chip::before,
+.card-face__chip::after {
+  content: '';
+  position: absolute;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.card-face__chip::before {
+  left: 0;
+  right: 0;
+  top: 33%;
+  height: 1px;
+  box-shadow: 0 33% 0 rgba(0, 0, 0, 0.28);
+}
+
+.card-face__chip::after {
+  top: 0;
+  bottom: 0;
+  left: 34%;
+  width: 1px;
+  box-shadow: 32% 0 0 rgba(0, 0, 0, 0.28);
+}
+
+.card-face__number {
+  font-family: var(--font-mono);
+  font-size: clamp(15px, 5.6vw, 21px);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.card-face__bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+.card-face__holder {
+  font-size: clamp(10px, 3.2vw, 12px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.82;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-face__expiry {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 3.2vw, 12px);
+  opacity: 0.82;
+  flex: none;
+}
+
+/* ── 翻面容器 ───────────────────────────────────── */
+.card-flip {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--card-aspect);
+  transform-style: preserve-3d;
+  perspective: 1400px;
+}
+
+.card-flip__side {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-flip__side--back {
+  transform: rotateY(180deg);
+}
+
+/* 背面的磁条 */
+.card-face--back .card-face__stripe {
+  height: 17%;
+  margin: 8% calc(-1 * clamp(14px, 5.2%, 22px)) 0;
+  background: rgba(0, 0, 0, 0.62);
+}

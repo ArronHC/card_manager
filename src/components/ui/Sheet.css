@@ -1,0 +1,78 @@
+.sheet__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 51;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border-radius: var(--r-sheet) var(--r-sheet) 0 0;
+  border-top: 1px solid var(--hairline);
+  box-shadow: var(--shadow-float);
+  /* 拖到底部时下方不露出背景 */
+  padding-bottom: var(--safe-bottom);
+}
+
+.sheet__grabber {
+  flex: none;
+  padding: var(--sp-3) 0 var(--sp-2);
+  display: grid;
+  place-items: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+.sheet__grabber::after {
+  content: '';
+  width: 38px;
+  height: 5px;
+  border-radius: var(--r-full);
+  background: var(--hairline-strong);
+}
+
+.sheet__head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 0 var(--sp-5) var(--sp-3);
+}
+
+.sheet__title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.sheet__body {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: 0 var(--sp-5) var(--sp-6);
+}
+
+.sheet__action {
+  font-size: 15px;
+  color: var(--accent);
+  padding: var(--sp-2);
+}
+
+.sheet__action:disabled {
+  opacity: 0.4;
+}
+
+.sheet__action--muted {
+  color: var(--text-secondary);
+}

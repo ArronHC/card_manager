@@ -1,0 +1,172 @@
+.form__preview {
+  margin: 0 auto var(--sp-5);
+  max-width: 380px;
+}
+
+.field {
+  display: block;
+  margin-bottom: var(--sp-4);
+}
+
+.field__label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-2);
+}
+
+.field__control {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  font-size: 16px; /* 低于 16px 时移动端会自动放大页面 */
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.field__control:focus {
+  border-color: var(--accent);
+  background: var(--surface-strong);
+}
+
+.field__control--mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+textarea.field__control {
+  resize: none;
+  min-height: 76px;
+  line-height: 1.5;
+}
+
+select.field__control {
+  /* 自绘下拉箭头 */
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-tertiary) 50%),
+    linear-gradient(135deg, var(--text-tertiary) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
+select.field__control option {
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+
+.field__hint {
+  font-size: 12px;
+  margin-top: 6px;
+  min-height: 16px;
+  color: var(--text-tertiary);
+}
+
+.field__hint--ok {
+  color: var(--success);
+}
+
+.field__hint--warn {
+  color: var(--warning);
+}
+
+.field__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-3);
+}
+
+/* ── 标签编辑 ─────────────────────────────────── */
+.tag-editor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  min-height: 48px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px 5px 11px;
+  border-radius: var(--r-full);
+  background: rgba(10, 132, 255, 0.18);
+  border: 1px solid rgba(10, 132, 255, 0.32);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tag-chip__x {
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0.6;
+  padding: 0 2px;
+}
+
+.tag-editor__input {
+  flex: 1;
+  min-width: 90px;
+  font-size: 15px;
+  padding: 4px 2px;
+}
+
+.tag-suggest {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.tag-suggest__item {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  color: var(--text-secondary);
+}
+
+/* ── 卡面配色 ─────────────────────────────────── */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+}
+
+.swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+}
+
+.swatch--active {
+  border-color: var(--text);
+}
+
+.swatch--auto {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.form__note {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-tertiary);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: var(--sp-3);
+  margin-top: var(--sp-2);
+}

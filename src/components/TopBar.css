@@ -1,0 +1,121 @@
+.topbar {
+  flex: none;
+  padding: calc(var(--safe-top) + var(--sp-3)) var(--sp-4) var(--sp-2);
+  background: rgba(11, 11, 15, 0.82);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--hairline);
+  z-index: 10;
+}
+
+.topbar__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+
+.topbar__title {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.topbar__count {
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
+.topbar__lock {
+  font-size: 14px;
+  color: var(--accent);
+  padding: var(--sp-1) var(--sp-2);
+}
+
+.search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 9px 12px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid transparent;
+  transition: border-color 140ms ease, background 140ms ease;
+}
+
+.search:focus-within {
+  border-color: rgba(10, 132, 255, 0.5);
+  background: var(--surface-strong);
+}
+
+.search__input {
+  flex: 1;
+  font-size: 16px;
+  min-width: 0;
+}
+
+.search__clear {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--hairline-strong);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--bg);
+}
+
+.tagbar {
+  display: flex;
+  gap: var(--sp-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: var(--sp-3) 0 var(--sp-1);
+  margin: 0 calc(-1 * var(--sp-4));
+  padding-left: var(--sp-4);
+  padding-right: var(--sp-4);
+}
+
+.tagbar::-webkit-scrollbar {
+  display: none;
+}
+
+.tagbar__chip {
+  flex: none;
+  font-size: 13px;
+  padding: 6px 13px;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  color: var(--text-secondary);
+  white-space: nowrap;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease;
+}
+
+.tagbar__chip--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 500;
+}
+
+/* ── 悬浮添加按钮 ─────────────────────────────── */
+.fab {
+  position: fixed;
+  right: var(--sp-5);
+  bottom: calc(var(--safe-bottom) + var(--sp-6));
+  z-index: 30;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(145deg, #3d8bff, #0a6fdb);
+  box-shadow: 0 14px 32px -8px rgba(10, 132, 255, 0.6);
+  color: #fff;
+}
