@@ -74,10 +74,15 @@ export function WalletStack({
             style={{ zIndex: index }}
             // layoutId 让卡片与详情页之间做 FLIP 连续形变
             layoutId={`card-${card.id}`}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: index * PEEK + 24 }}
+            initial={reduced ? { opacity: 0 } : { opacity: 0, y: index * PEEK + 40 }}
             animate={{ opacity: 1, y: index * PEEK }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
-            transition={reduced ? REDUCED : SPRING_SOFT}
+            transition={
+              reduced
+                ? REDUCED
+                : // 入场按索引错落 40ms，形成 Wallet 式的逐张滑入
+                  { ...SPRING_SOFT, delay: Math.min(index * 0.04, 0.4) }
+            }
             whileTap={reduced ? undefined : { scale: 0.975 }}
             onClick={() => {
               tapLight()

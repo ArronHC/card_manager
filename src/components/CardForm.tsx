@@ -84,7 +84,9 @@ export function CardForm({
       Boolean(editing.bankName) &&
       editing.bankName !== '未识别' &&
       editing.bankName !== bankTheme('unknown').short
-    setBankLocked(Boolean(editing?.bankKey !== 'unknown' || hasCustomIssuer))
+    setBankLocked(
+      Boolean(editing) && (editing!.bankKey !== 'unknown' || hasCustomIssuer),
+    )
     setIssuerHint('')
     setIssuerLoading(false)
     automaticIin.current = ''
@@ -367,12 +369,13 @@ export function CardForm({
             maxLength={5}
             value={draft.secret.expiry}
             onChange={(e) => {
-              // 输到第 3 位自动补斜杠
-              const v = e.target.value.replace(/[^\d/]/g, '')
+              // 只保留数字并重排为 MM/YY，避免手输斜杠或粘贴时出现重复分隔符
+              const digitsOnly = e.target.value.replace(/\D/g, '').slice(0, 4)
+              const isDeleting = e.target.value.length < draft.secret.expiry.length
               const formatted =
-                v.length === 2 && !v.includes('/') && draft.secret.expiry.length < 2
-                  ? v + '/'
-                  : v
+                digitsOnly.length >= 2 && !(isDeleting && digitsOnly.length === 2)
+                  ? digitsOnly.slice(0, 2) + '/' + digitsOnly.slice(2)
+                  : digitsOnly
               setSecret('expiry', formatted)
             }}
           />
