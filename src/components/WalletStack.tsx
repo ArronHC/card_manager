@@ -71,19 +71,12 @@ export function WalletStack({
           <motion.div
             key={card.id}
             className="stack__item"
-            style={{ zIndex: index }}
+            // 堆叠位置用 top 布局定位而不是 y transform：
+            // layoutId 的 FLIP 形变独占 transform 通道，
+            // 否则详情页收起时会先执行残留的 y 弹簧再归位（先下弹一下）。
+            style={{ zIndex: index, top: index * PEEK }}
             // layoutId 让卡片与详情页之间做 FLIP 连续形变
             layoutId={`card-${card.id}`}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, y: index * PEEK + 40 }}
-            animate={{ opacity: 1, y: index * PEEK }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
-            transition={
-              reduced
-                ? REDUCED
-                : // 入场按索引错落 40ms，形成 Wallet 式的逐张滑入
-                  { ...SPRING_SOFT, delay: Math.min(index * 0.04, 0.4) }
-            }
-            whileTap={reduced ? undefined : { scale: 0.975 }}
             onClick={() => {
               tapLight()
               onSelect(card)
@@ -98,18 +91,32 @@ export function WalletStack({
               }
             }}
           >
-            <CardFace
-              bankKey={card.bankKey}
-              bankName={card.bankName}
-              nickname={card.nickname}
-              network={card.network}
-              cardType={card.cardType}
-              fullNumber={card.secret.fullNumber}
-              last4={card.last4}
-              holder={card.secret.holder}
-              expiry={card.secret.expiry}
-              colorOverride={card.colorOverride}
-            />
+            {/* 入场/按压动画放内层，与外层的 FLIP 互不干扰 */}
+            <motion.div
+              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
+              transition={
+                reduced
+                  ? REDUCED
+                  : // 入场按索引错落 40ms，形成 Wallet 式的逐张滑入
+                    { ...SPRING_SOFT, delay: Math.min(index * 0.04, 0.4) }
+              }
+              whileTap={reduced ? undefined : { scale: 0.975 }}
+            >
+              <CardFace
+                bankKey={card.bankKey}
+                bankName={card.bankName}
+                nickname={card.nickname}
+                network={card.network}
+                cardType={card.cardType}
+                fullNumber={card.secret.fullNumber}
+                last4={card.last4}
+                holder={card.secret.holder}
+                expiry={card.secret.expiry}
+                colorOverride={card.colorOverride}
+              />
+            </motion.div>
           </motion.div>
         ))}
       </div>
