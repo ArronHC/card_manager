@@ -230,6 +230,36 @@ export const BIN_TABLE: BinEntry[] = [
   { prefix: '622323', bank: 'njcb', kind: 'debit' },
   { prefix: '622885', bank: 'njcb', kind: 'debit' },
   { prefix: '621259', bank: 'njcb', kind: 'debit' },
+
+  // ── 境外与加密卡机构 ─────────────────────────────────
+  // Bybit Card (Mastercard)
+  { prefix: '539587', bank: 'bybit', kind: 'debit' },
+  { prefix: '539588', bank: 'bybit', kind: 'debit' },
+  { prefix: '540507', bank: 'bybit', kind: 'debit' },
+  { prefix: '516488', bank: 'bybit', kind: 'debit' },
+  { prefix: '526889', bank: 'bybit', kind: 'credit' },
+  { prefix: '540098', bank: 'bybit', kind: 'debit' },
+
+  // Wise (Visa / Mastercard)
+  { prefix: '439654', bank: 'wise', kind: 'debit' },
+  { prefix: '549627', bank: 'wise', kind: 'debit' },
+  { prefix: '531993', bank: 'wise', kind: 'debit' },
+  { prefix: '516289', bank: 'wise', kind: 'debit' },
+
+  // Revolut (Mastercard / Visa)
+  { prefix: '539123', bank: 'revolut', kind: 'debit' },
+  { prefix: '516839', bank: 'revolut', kind: 'debit' },
+  { prefix: '459654', bank: 'revolut', kind: 'debit' },
+
+  // 汇丰银行 (HSBC)
+  { prefix: '541289', bank: 'hsbc', kind: 'credit' },
+  { prefix: '401318', bank: 'hsbc', kind: 'credit' },
+  { prefix: '622985', bank: 'hsbc', kind: 'debit' },
+
+  // 花旗银行 (Citi)
+  { prefix: '412800', bank: 'citi', kind: 'credit' },
+  { prefix: '542418', bank: 'citi', kind: 'credit' },
+  { prefix: '622998', bank: 'citi', kind: 'debit' },
 ]
 
 /**

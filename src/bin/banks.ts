@@ -24,6 +24,11 @@ export type BankKey =
   | 'bob'
   | 'bosc'
   | 'njcb'
+  | 'bybit'
+  | 'wise'
+  | 'revolut'
+  | 'hsbc'
+  | 'citi'
   | 'unknown'
 
 /** 卡面几何标识的形状族。CardFace 据此绘制 SVG。 */
@@ -198,6 +203,46 @@ export const BANKS: Record<BankKey, BankTheme> = {
     gradient: ['#134a4e', '#1f7d84', '#082a2c'],
     foreground: '#f0fdff',
     glyph: 'grid',
+  },
+  bybit: {
+    key: 'bybit',
+    name: 'Bybit Card',
+    short: 'Bybit',
+    gradient: ['#121316', '#22252c', '#0e0f12'],
+    foreground: '#ffffff',
+    glyph: 'diamond',
+  },
+  wise: {
+    key: 'wise',
+    name: 'Wise',
+    short: 'Wise',
+    gradient: ['#0d2105', '#1e470c', '#081703'],
+    foreground: '#9fe870',
+    glyph: 'blade',
+  },
+  revolut: {
+    key: 'revolut',
+    name: 'Revolut',
+    short: 'Revolut',
+    gradient: ['#181a20', '#2a2e39', '#101116'],
+    foreground: '#f7f9fa',
+    glyph: 'chevron',
+  },
+  hsbc: {
+    key: 'hsbc',
+    name: '汇丰银行',
+    short: '汇丰银行',
+    gradient: ['#7c121b', '#aa1f2b', '#48090e'],
+    foreground: '#ffffff',
+    glyph: 'diamond',
+  },
+  citi: {
+    key: 'citi',
+    name: '花旗银行',
+    short: '花旗银行',
+    gradient: ['#0b2958', '#14468f', '#061733'],
+    foreground: '#f0f6ff',
+    glyph: 'arc',
   },
   unknown: {
     key: 'unknown',

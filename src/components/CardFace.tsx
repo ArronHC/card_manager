@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { bankTheme } from '../bin/banks'
 import {
   formatCardNumber,
@@ -77,6 +78,15 @@ function CopyableText({
   onCopy?: CopyFieldHandler
   ariaLabel?: string
 }) {
+  const [copied, setCopied] = useState(false)
+  const timerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current)
+    }
+  }, [])
+
   if (!onCopy || !value) {
     return (
       <div className={className} aria-label={ariaLabel}>
@@ -87,15 +97,19 @@ function CopyableText({
   return (
     <button
       type="button"
-      className={`${className} card-face__copyable`}
+      className={`${className} card-face__copyable${copied ? ' card-face__copyable--copied' : ''}`}
       aria-label={`复制${label}`}
       onClick={(e) => {
         // 卡面在列表里可能被套在可点击容器中，复制不应触发外层跳转
         e.stopPropagation()
         onCopy(label, value)
+        setCopied(true)
+        if (timerRef.current) window.clearTimeout(timerRef.current)
+        timerRef.current = window.setTimeout(() => setCopied(false), 550)
       }}
     >
       {display}
+      {copied && <span className="card-face__copy-glow" aria-hidden="true" />}
     </button>
   )
 }
@@ -138,7 +152,13 @@ export function CardFace({
       <div className="card-face__body">
         <div className="card-face__top">
           <div className="card-face__bank">
-            <BankGlyph glyph={theme.glyph} color={fg} size={30} />
+            <BankGlyph
+              bankKey={bankKey}
+              bankName={bankName || theme.short}
+              glyph={theme.glyph}
+              color={fg}
+              size={30}
+            />
             <div className="card-face__bank-text">
               <div className="card-face__bank-name">
                 {bankName || theme.short}

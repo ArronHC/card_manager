@@ -208,6 +208,7 @@
 
 /* 可点击复制的卡面信息：不破坏排版，按压时轻微下陷提示可交互 */
 .card-face__copyable {
+  position: relative;
   color: inherit;
   text-align: inherit;
   letter-spacing: inherit;
@@ -216,11 +217,55 @@
   padding: 2px 6px;
   transition: background 120ms ease, transform 120ms ease;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .card-face__copyable:active {
   background: rgba(255, 255, 255, 0.14);
   transform: scale(0.97);
+}
+
+/* 复制成功时的微光波纹动效 */
+.card-face__copyable--copied {
+  animation: copyPulseGlow 550ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes copyPulseGlow {
+  0% {
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.65);
+    transform: scale(0.96);
+  }
+  30% {
+    background: rgba(255, 255, 255, 0.22);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+    transform: scale(1.02);
+  }
+  100% {
+    background: transparent;
+    box-shadow: 0 0 0 8px transparent;
+    transform: scale(1);
+  }
+}
+
+.card-face__copy-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.65) 0%, transparent 75%);
+  animation: copyRadialWave 500ms ease-out forwards;
+}
+
+@keyframes copyRadialWave {
+  0% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
 }
 
 /* ── 翻面容器 ───────────────────────────────────── */

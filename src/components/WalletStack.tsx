@@ -2,12 +2,12 @@ import { motion, useReducedMotion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import type { Card } from '../data/types'
 import { tapLight } from '../ui/haptics'
-import { REDUCED, SPRING_SOFT } from '../ui/motion'
+import { REDUCED } from '../ui/motion'
 import { CardFace } from './CardFace'
 import './WalletStack.css'
 
-/** 每张卡露出的高度，与 CSS 中的 --stack-peek 保持一致。 */
-const PEEK = 62
+/** 基础卡片露出高度 */
+const DEFAULT_PEEK = 62
 
 export function WalletStack({
   cards,
@@ -19,6 +19,7 @@ export function WalletStack({
   const reduced = useReducedMotion()
   const innerRef = useRef<HTMLDivElement>(null)
   const [cardHeight, setCardHeight] = useState(0)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   // 卡片高度由宽度和固定宽高比决定；随窗口变化重新测量，
   // 因为容器高度需要按「最后一张卡完整露出」来算。
@@ -57,68 +58,101 @@ export function WalletStack({
     )
   }
 
-  // 容器高度 = 前 n-1 张各占 PEEK + 最后一张的完整高度
-  const stackHeight = (cards.length - 1) * PEEK + cardHeight
+  // 卡数较多时自动适配步长，避免页面无休止过长
+  const peek = cards.length > 7 ? 54 : DEFAULT_PEEK
+
+  // 容器高度 = 前 n-1 张各占 peek + 最后一张的完整高度 + 扇形展开余量 (48px)
+  const stackHeight = (cards.length - 1) * peek + cardHeight + 48
 
   return (
-    <div className="stack">
+    <div className="stack" onPointerLeave={() => setHoveredIndex(null)}>
       <div
         className="stack__inner"
         ref={innerRef}
         style={{ height: stackHeight || undefined }}
       >
-        {cards.map((card, index) => (
-          <motion.div
-            key={card.id}
-            className="stack__item"
-            // 堆叠位置用 top 布局定位而不是 y transform：
-            // layoutId 的 FLIP 形变独占 transform 通道，
-            // 否则详情页收起时会先执行残留的 y 弹簧再归位（先下弹一下）。
-            style={{ zIndex: index, top: index * PEEK }}
-            // layoutId 让卡片与详情页之间做 FLIP 连续形变
-            layoutId={`card-${card.id}`}
-            onClick={() => {
-              tapLight()
-              onSelect(card)
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label={`${card.bankName} ${card.nickname} 尾号 ${card.last4}`}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                onSelect(card)
-              }
-            }}
-          >
-            {/* 入场/按压动画放内层，与外层的 FLIP 互不干扰 */}
+        {cards.map((card, index) => {
+          // 依据当前悬浮卡片，动态计算位移与扇形微角度（Fan-out & Accordion）
+          let targetY = 0
+          let targetScale = 1
+          let targetRotateZ = index % 2 === 0 ? 0.3 : -0.3
+
+          if (hoveredIndex !== null) {
+            if (index === hoveredIndex) {
+              targetY = -12
+              targetScale = 1.02
+              targetRotateZ = 0
+            } else if (index > hoveredIndex) {
+              targetY = 32 // 下方卡片整体向下散开，形成风琴式开口
+              targetRotateZ = index % 2 === 0 ? 0.6 : -0.6
+            } else {
+              targetY = -4
+            }
+          }
+
+          return (
             <motion.div
-              initial={reduced ? { opacity: 0 } : { opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
-              transition={
-                reduced
-                  ? REDUCED
-                  : // 入场按索引错落 40ms，形成 Wallet 式的逐张滑入
-                    { ...SPRING_SOFT, delay: Math.min(index * 0.04, 0.4) }
-              }
-              whileTap={reduced ? undefined : { scale: 0.975 }}
+              key={card.id}
+              className="stack__item"
+              style={{ zIndex: index, top: index * peek }}
+              layoutId={`card-${card.id}`}
+              onPointerEnter={() => setHoveredIndex(index)}
+              onFocus={() => setHoveredIndex(index)}
+              onBlur={() => setHoveredIndex(null)}
+              onClick={() => {
+                tapLight()
+                onSelect(card)
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`${card.bankName} ${card.nickname} 尾号 ${card.last4}`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelect(card)
+                }
+              }}
             >
-              <CardFace
-                bankKey={card.bankKey}
-                bankName={card.bankName}
-                nickname={card.nickname}
-                network={card.network}
-                cardType={card.cardType}
-                fullNumber={card.secret.fullNumber}
-                last4={card.last4}
-                holder={card.secret.holder}
-                expiry={card.secret.expiry}
-                colorOverride={card.colorOverride}
-              />
+              {/* 入场/按压及风琴扇形展开动画放内层，与外层的 FLIP 互不干扰 */}
+              <motion.div
+                className="stack__card-wrapper"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, y: 40 }}
+                animate={{
+                  opacity: 1,
+                  y: targetY,
+                  scale: targetScale,
+                  rotateZ: targetRotateZ,
+                }}
+                exit={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94 }}
+                transition={
+                  reduced
+                    ? REDUCED
+                    : {
+                        type: 'spring',
+                        stiffness: 420,
+                        damping: 30,
+                        mass: 0.8,
+                        delay: hoveredIndex === null ? Math.min(index * 0.04, 0.3) : 0,
+                      }
+                }
+                whileTap={reduced ? undefined : { scale: 0.97 }}
+              >
+                <CardFace
+                  bankKey={card.bankKey}
+                  bankName={card.bankName}
+                  nickname={card.nickname}
+                  network={card.network}
+                  cardType={card.cardType}
+                  fullNumber={card.secret.fullNumber}
+                  last4={card.last4}
+                  holder={card.secret.holder}
+                  expiry={card.secret.expiry}
+                  colorOverride={card.colorOverride}
+                />
+              </motion.div>
             </motion.div>
-          </motion.div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

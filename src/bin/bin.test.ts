@@ -147,4 +147,27 @@ describe('银行主题', () => {
       expect(theme.name).not.toBe('')
     }
   })
+
+  it('正确识别 Bybit、Wise、Revolut 与汇丰等国际/加密卡', () => {
+    // Bybit Mastercard
+    const bybit = detectCard('5395870012345678')
+    expect(bybit.bank).toBe('bybit')
+    expect(bybit.network).toBe('mastercard')
+
+    // Wise Visa
+    const wise = detectCard('4396540012345678')
+    expect(wise.bank).toBe('wise')
+    expect(wise.network).toBe('visa')
+
+    // Revolut Mastercard
+    const revolut = detectCard('5391230012345678')
+    expect(revolut.bank).toBe('revolut')
+    expect(revolut.network).toBe('mastercard')
+
+    // 汇丰银行
+    const hsbc = detectCard('5412890012345678')
+    expect(hsbc.bank).toBe('hsbc')
+    expect(hsbc.network).toBe('mastercard')
+  })
 })
+

@@ -21,8 +21,13 @@
   position: absolute;
   left: 0;
   right: 0;
-  transform-origin: 50% 0%;
   cursor: pointer;
+  outline: none;
+}
+
+.stack__card-wrapper {
+  transform-origin: 50% 15%;
+  will-change: transform;
 }
 
 .stack__empty {
