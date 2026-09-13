@@ -31,6 +31,8 @@ android {
                 storePassword keystoreProps['storePassword']
                 keyAlias keystoreProps['keyAlias']
                 keyPassword keystoreProps['keyPassword']
+                v1SigningEnabled true
+                v2SigningEnabled true
             }
         }
     }
